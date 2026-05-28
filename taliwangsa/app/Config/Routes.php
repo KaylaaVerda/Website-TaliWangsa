@@ -16,6 +16,9 @@ $routes->post('/login', 'Auth::loginProcess');
 $routes->get('/register', 'Auth::register');
 $routes->post('/register', 'Auth::registerProcess');
 
+$routes->get('/orders', 'Client::orders');
+$routes->get('/orders/(:num)', 'Client::orderDetail/$1');
+
 $routes->get('/logout', 'Auth::logout');
 
 $routes->group('', ['filter' => 'auth'], function($routes) {
