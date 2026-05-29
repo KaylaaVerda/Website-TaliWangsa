@@ -22,20 +22,38 @@
             <div class="bg-white rounded-3xl shadow-soft p-4 flex flex-col lg:flex-row gap-4 mb-8">
 
                 <input type="text"
+                    id="searchKeyword"
                     placeholder="Cari jasa profesional..."
                     class="flex-1 px-4 py-4 outline-none rounded-2xl bg-[#F5FAFD]">
 
-                <select class="px-4 py-4 rounded-2xl bg-[#F5FAFD] outline-none">
-                    <option>Semua Kategori</option>
-                    <option>Desain Grafis</option>
-                    <option>Website</option>
-                    <option>Video</option>
+                <select id="searchCategory" class="px-4 py-4 rounded-2xl bg-[#F5FAFD] outline-none">
+                    <option value="">Semua Kategori</option>
+                    <option value="desain-grafis">Desain Grafis</option>
+                    <option value="pengembangan-web">Website</option>
+                    <option value="video">Video</option>
+                    <option value="digital-marketing">Digital Marketing</option>
                 </select>
 
-                <button class="bg-[#00A9FF] hover:bg-[#0094E0] text-white px-8 py-4 rounded-2xl font-semibold btn-hover">
+                <button onclick="handleSearch()" class="bg-[#00A9FF] hover:bg-[#0094E0] text-white px-8 py-4 rounded-2xl font-semibold btn-hover">
                     Cari
                 </button>
             </div>
+
+            <script>
+                function handleSearch() {
+                    const keyword = document.getElementById('searchKeyword').value;
+                    const category = document.getElementById('searchCategory').value;
+                    let url = '/marketplace';
+                    let params = [];
+                    if (keyword) params.push('search=' + encodeURIComponent(keyword));
+                    if (category) params.push('category=' + encodeURIComponent(category));
+                    if (params.length > 0) url += '?' + params.join('&');
+                    window.location.href = url;
+                }
+                document.getElementById('searchKeyword').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') handleSearch();
+                });
+            </script>
 
             <div class="flex flex-wrap gap-3 mb-10">
                 <span class="bg-white px-4 py-2 rounded-full shadow-soft text-[#64748B]">

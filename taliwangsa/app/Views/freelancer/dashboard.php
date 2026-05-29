@@ -346,7 +346,7 @@ let incomeChart = new Chart(ctx, {
 
 function loadChart(days){
 
-    fetch('/freelancer/chart/' + days)
+    fetch('/freelancer/chart-data/' + days)
     .then(res => res.json())
     .then(data => {
 

@@ -91,9 +91,9 @@
             </div>
 
             <div class="hidden lg:flex items-center gap-10">
-                <a href="#" class="text-[#64748B] hover:text-[#00A9FF]">Cari Jasa</a>
-                <a href="#" class="text-[#64748B] hover:text-[#00A9FF]">Kategori</a>
-                <a href="#" class="text-[#64748B] hover:text-[#00A9FF]">Cara Kerja</a>
+                <a href="/marketplace" class="text-[#64748B] hover:text-[#00A9FF]">Cari Jasa</a>
+                <a href="/marketplace" class="text-[#64748B] hover:text-[#00A9FF]">Kategori</a>
+                <a href="/how-it-works" class="text-[#64748B] hover:text-[#00A9FF]">Cara Kerja</a>
             </div>
 
             <div class="hidden lg:flex items-center gap-4">
@@ -117,9 +117,9 @@
 
         <div id="mobileMenu" class="hidden pb-5 lg:hidden">
             <div class="bg-white rounded-2xl shadow-soft p-5 flex flex-col gap-4">
-                <a href="#">Cari Jasa</a>
-                <a href="#">Kategori</a>
-                <a href="#">Cara Kerja</a>
+                <a href="/marketplace">Cari Jasa</a>
+                <a href="/marketplace">Kategori</a>
+                <a href="/how-it-works">Cara Kerja</a>
 
                 <a href="/login" class="border border-[#00A9FF] text-center text-[#00A9FF] py-3 rounded-xl">
                     Masuk
@@ -154,9 +154,9 @@
                 <h3 class="font-bold mb-5">Marketplace</h3>
 
                 <div class="flex flex-col gap-3 text-gray-300">
-                    <a href="#">Cari Freelancer</a>
-                    <a href="#">Kategori</a>
-                    <a href="#">Proyek</a>
+                    <a href="/marketplace">Cari Freelancer</a>
+                    <a href="/marketplace">Kategori</a>
+                    <a href="/marketplace">Proyek</a>
                     <a href="#">Portfolio</a>
                 </div>
             </div>

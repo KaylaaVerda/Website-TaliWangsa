@@ -87,9 +87,9 @@
 
         <nav class="space-y-3">
 
-            <a href="/freelancer"
+            <a href="/freelancer/dashboard"
                 class="flex items-center gap-4 px-5 py-4 rounded-2xl font-semibold transition
-                <?= uri_string() == 'freelancer'
+                <?= in_array(uri_string(), ['freelancer', 'freelancer/dashboard'])
                     ? 'bg-[#EAF7FF] text-[#00A9FF]'
                     : 'hover:bg-[#F5FAFD]' ?>">
 

@@ -260,6 +260,25 @@ class Freelancer extends Controller
             ->get()
             ->getRow();
 
+        if (!$profile) {
+            $user = $this->db->table('users')
+                ->select('name, email, avatar')
+                ->where('id', $userId)
+                ->get()
+                ->getRow();
+
+            $profile = (object) [
+                'name' => $user->name ?? '',
+                'email' => $user->email ?? '',
+                'avatar' => $user->avatar ?? '',
+                'headline' => '',
+                'bio' => '',
+                'skills' => '',
+                'hourly_rate' => 0,
+                'availability' => 0,
+            ];
+        }
+
         return view('freelancer/profile', [
             'profile' => $profile
         ]);
@@ -269,16 +288,29 @@ class Freelancer extends Controller
     {
         $userId = session()->get('user_id');
 
-        $this->db->table('freelancer_profiles')
+        $existing = $this->db->table('freelancer_profiles')
             ->where('user_id', $userId)
-            ->update([
-                'headline' => $this->request->getPost('headline'),
-                'bio' => $this->request->getPost('bio'),
-                'skills' => $this->request->getPost('skills'),
-                'hourly_rate' => $this->request->getPost('hourly_rate'),
-                'availability' => $this->request->getPost('availability') ? 1 : 0,
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ->get()
+            ->getRow();
+
+        $profileData = [
+            'headline' => $this->request->getPost('headline'),
+            'bio' => $this->request->getPost('bio'),
+            'skills' => $this->request->getPost('skills'),
+            'hourly_rate' => $this->request->getPost('hourly_rate'),
+            'availability' => $this->request->getPost('availability') ? 1 : 0,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        if ($existing) {
+            $this->db->table('freelancer_profiles')
+                ->where('user_id', $userId)
+                ->update($profileData);
+        } else {
+            $profileData['user_id'] = $userId;
+            $profileData['created_at'] = date('Y-m-d H:i:s');
+            $this->db->table('freelancer_profiles')->insert($profileData);
+        }
 
         $this->db->table('users')
             ->where('id', $userId)

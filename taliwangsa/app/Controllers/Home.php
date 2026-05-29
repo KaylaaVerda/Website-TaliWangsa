@@ -8,4 +8,9 @@ class Home extends BaseController
     {
         return view('home/index');
     }
+
+    public function howItWorks()
+    {
+        return view('home/how_it_works');
+    }
 }
