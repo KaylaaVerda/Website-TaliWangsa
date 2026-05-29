@@ -205,7 +205,9 @@
 
                         <td class="px-6 py-5">
 
-                            <?php if($user->is_active): ?>
+                            <?php $userActive = isset($user->is_active) ? $user->is_active : 1; ?>
+
+                            <?php if($userActive): ?>
 
                             <span class="bg-green-100 text-green-600 px-4 py-2 rounded-full text-xs font-bold">
                                 Aktif
@@ -242,7 +244,7 @@
 
                                 </button>
 
-                                <?php if($user->is_active): ?>
+                                <?php if($userActive): ?>
 
                                 <button onclick="openSuspendModal(<?= $user->id ?>)"
                                     class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">

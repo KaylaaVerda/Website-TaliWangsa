@@ -245,10 +245,30 @@ class Admin extends Controller
             ->with('success', 'Dispute berhasil diperbarui');
     }
 
+    protected function getCategoryOrderColumn()
+    {
+        $catCols = $this->db->query("SHOW COLUMNS FROM categories")->getResultArray();
+        $catFields = array_column($catCols, 'Field');
+
+        if (in_array('order', $catFields)) {
+            return 'order';
+        }
+
+        if (in_array('sort_order', $catFields)) {
+            return 'sort_order';
+        }
+
+        return 'id';
+    }
+
     public function categories()
     {
+        $orderColumn = $this->getCategoryOrderColumn();
+        $orderAlias = $orderColumn === 'order' ? 'categories.order as order_value' : ($orderColumn === 'sort_order' ? 'categories.sort_order as order_value' : 'categories.id as order_value');
+
         $categories = $this->db->table('categories')
-            ->orderBy('categories.order', 'ASC')
+            ->select('categories.*, ' . $orderAlias)
+            ->orderBy('categories.' . $orderColumn, 'ASC')
             ->get()
             ->getResult();
 
@@ -259,14 +279,18 @@ class Admin extends Controller
 
     public function storeCategory()
     {
-        $this->db->table('categories')->insert([
+        $orderColumn = $this->getCategoryOrderColumn();
+
+        $data = [
             'name' => $this->request->getPost('name'),
             'slug' => $this->request->getPost('slug'),
             'description' => $this->request->getPost('description'),
             'is_active' => $this->request->getPost('is_active') ? 1 : 0,
-            'order' => $this->request->getPost('order') ?: 0,
+            $orderColumn => $this->request->getPost('order') ?: 0,
             'created_at' => date('Y-m-d H:i:s')
-        ]);
+        ];
+
+        $this->db->table('categories')->insert($data);
 
         return redirect()->back()
             ->with('success', 'Kategori berhasil ditambahkan');
@@ -274,16 +298,20 @@ class Admin extends Controller
 
     public function updateCategory($id)
     {
+        $orderColumn = $this->getCategoryOrderColumn();
+
+        $data = [
+            'name' => $this->request->getPost('name'),
+            'slug' => $this->request->getPost('slug'),
+            'description' => $this->request->getPost('description'),
+            'is_active' => $this->request->getPost('is_active') ? 1 : 0,
+            $orderColumn => $this->request->getPost('order') ?: 0,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
         $this->db->table('categories')
             ->where('id', $id)
-            ->update([
-                'name' => $this->request->getPost('name'),
-                'slug' => $this->request->getPost('slug'),
-                'description' => $this->request->getPost('description'),
-                'is_active' => $this->request->getPost('is_active') ? 1 : 0,
-                'order' => $this->request->getPost('order') ?: 0,
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            ->update($data);
 
         return redirect()->back()
             ->with('success', 'Kategori berhasil diperbarui');

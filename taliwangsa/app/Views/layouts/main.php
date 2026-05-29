@@ -92,7 +92,7 @@
 
             <div class="hidden lg:flex items-center gap-10">
                 <a href="/marketplace" class="text-[#64748B] hover:text-[#00A9FF]">Cari Jasa</a>
-                <a href="/marketplace" class="text-[#64748B] hover:text-[#00A9FF]">Kategori</a>
+                <a href="/" class="text-[#64748B] hover:text-[#00A9FF]">Home</a>
                 <a href="/how-it-works" class="text-[#64748B] hover:text-[#00A9FF]">Cara Kerja</a>
             </div>
 
@@ -118,7 +118,7 @@
         <div id="mobileMenu" class="hidden pb-5 lg:hidden">
             <div class="bg-white rounded-2xl shadow-soft p-5 flex flex-col gap-4">
                 <a href="/marketplace">Cari Jasa</a>
-                <a href="/marketplace">Kategori</a>
+                <a href="/">Home</a>
                 <a href="/how-it-works">Cara Kerja</a>
 
                 <a href="/login" class="border border-[#00A9FF] text-center text-[#00A9FF] py-3 rounded-xl">
@@ -155,7 +155,7 @@
 
                 <div class="flex flex-col gap-3 text-gray-300">
                     <a href="/marketplace">Cari Freelancer</a>
-                    <a href="/marketplace">Kategori</a>
+                    <a href="/">Home</a>
                     <a href="/marketplace">Proyek</a>
                     <a href="#">Portfolio</a>
                 </div>

@@ -64,7 +64,7 @@
                             </p>
                         </div>
 
-                        <button onclick="contactFreelancer(<?= $service->user_id ?>)" class="bg-[#00A9FF] hover:bg-[#0094E0] text-white font-semibold py-4 px-8 rounded-2xl transition w-full sm:w-auto">
+                        <button onclick="contactFreelancer(<?= $service->freelancer_user_id ?>)" class="bg-[#00A9FF] hover:bg-[#0094E0] text-white font-semibold py-4 px-8 rounded-2xl transition w-full sm:w-auto">
                             Hubungi Freelancer
                         </button>
 
@@ -153,7 +153,7 @@
 
                 </div>
 
-                <button onclick="contactFreelancer(<?= $service->user_id ?>)" class="w-full bg-[#00A9FF] hover:bg-[#0094E0] text-white font-semibold py-3 rounded-2xl transition">
+                <button onclick="contactFreelancer(<?= $service->freelancer_user_id ?>)" class="w-full bg-[#00A9FF] hover:bg-[#0094E0] text-white font-semibold py-3 rounded-2xl transition">
                     Pesan Sekarang
                 </button>
 

@@ -30,15 +30,16 @@
                 <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
                     <td class="px-6 py-5 font-semibold text-slate-800"><?= esc($category->name) ?></td>
                     <td class="px-6 py-5 text-slate-600"><?= esc($category->slug) ?></td>
+                    <?php $catActive = isset($category->is_active) ? $category->is_active : 1; ?>
                     <td class="px-6 py-5">
-                        <span class="<?= $category->is_active ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600' ?> px-3 py-1 rounded-full text-xs font-semibold">
-                            <?= $category->is_active ? 'Aktif' : 'Nonaktif' ?>
+                        <span class="<?= $catActive ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600' ?> px-3 py-1 rounded-full text-xs font-semibold">
+                            <?= $catActive ? 'Aktif' : 'Nonaktif' ?>
                         </span>
                     </td>
-                    <td class="px-6 py-5 text-slate-600"><?= esc($category->order ?? '-') ?></td>
+                    <td class="px-6 py-5 text-slate-600"><?= esc($category->order_value ?? '-') ?></td>
                     <td class="px-6 py-5 text-center">
                         <div class="flex flex-wrap justify-center gap-2">
-                            <button type="button" onclick="openCategoryModal(<?= esc($category->id) ?>, '<?= esc($category->name) ?>', '<?= esc($category->slug) ?>', '<?= esc($category->description ?? '') ?>', <?= $category->is_active ? 'true' : 'false' ?>, <?= esc($category->order ?? 0) ?>)" class="bg-[#EAF7FF] text-[#00A9FF] px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#D8F1FF] transition">Edit</button>
+                            <button type="button" onclick="openCategoryModal(<?= esc($category->id) ?>, '<?= esc($category->name) ?>', '<?= esc($category->slug) ?>', '<?= esc($category->description ?? '') ?>', <?= $catActive ? 'true' : 'false' ?>, <?= esc($category->order_value ?? 0) ?>)" class="bg-[#EAF7FF] text-[#00A9FF] px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#D8F1FF] transition">Edit</button>
                             <button type="button" onclick="openDeleteModal(<?= esc($category->id) ?>, '<?= esc($category->name) ?>')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">Hapus</button>
                         </div>
                     </td>

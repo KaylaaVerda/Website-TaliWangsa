@@ -12,6 +12,8 @@ class Freelancer extends Controller
     {
         helper(['url','form']);
 
+        $this->db = \Config\Database::connect();
+
         if(!session()->get('isLoggedIn')){
             return redirect()->to('/login')->send();
         }
@@ -19,8 +21,6 @@ class Freelancer extends Controller
         if(session()->get('role') != 'freelancer'){
             return redirect()->to('/login')->send();
         }
-
-        $this->db = \Config\Database::connect();
     }
 
     public function index()
@@ -62,9 +62,24 @@ class Freelancer extends Controller
             ->get()
             ->getResult();
 
-        $services = $this->db->table('services')
-            ->where('user_id', $userId)
-            ->limit(3)
+        $serviceColumns = $this->db->query("SHOW COLUMNS FROM services")->getResultArray();
+        $serviceFields = array_column($serviceColumns, 'Field');
+        $serviceKey = in_array('freelancer_profile_id', $serviceFields) ? 'freelancer_profile_id' : (in_array('user_id', $serviceFields) ? 'user_id' : (in_array('freelancer_id', $serviceFields) ? 'freelancer_id' : 'user_id'));
+
+        $services = $this->db->table('services s')
+            ->select('s.*, c.name as category_name')
+            ->join('categories c', 'c.id = s.category_id', 'left');
+
+        if ($serviceKey === 'freelancer_profile_id') {
+            $services = $services->join('freelancer_profiles fp', 'fp.id = s.freelancer_profile_id', 'left')
+                ->where('fp.user_id', $userId);
+        } elseif ($serviceKey === 'freelancer_id') {
+            $services = $services->where('s.freelancer_id', $userId);
+        } else {
+            $services = $services->where('s.user_id', $userId);
+        }
+
+        $services = $services->limit(3)
             ->get()
             ->getResult();
 
@@ -162,11 +177,35 @@ class Freelancer extends Controller
     {
         $userId = session()->get('user_id');
 
-        $services = $this->db->table('services s')
+        // Detect services foreign key column (user_id, freelancer_id, or freelancer_profile_id)
+        $cols = $this->db->query("SHOW COLUMNS FROM services")->getResultArray();
+        $fields = array_column($cols, 'Field');
+        $usesProfile = false;
+        if (in_array('freelancer_profile_id', $fields)) {
+            $serviceUserCol = 'freelancer_profile_id';
+            $usesProfile = true;
+        } elseif (in_array('user_id', $fields)) {
+            $serviceUserCol = 'user_id';
+        } elseif (in_array('freelancer_id', $fields)) {
+            $serviceUserCol = 'freelancer_id';
+        } else {
+            $serviceUserCol = 'user_id';
+        }
+
+        $qb = $this->db->table('services s')
             ->select('s.*, c.name as category_name')
-            ->join('categories c', 'c.id = s.category_id')
-            ->where('s.user_id', $userId)
-            ->orderBy('s.created_at','DESC')
+            ->join('categories c', 'c.id = s.category_id');
+
+        if ($usesProfile) {
+            $qb->join('freelancer_profiles fp', 'fp.id = s.freelancer_profile_id', 'left')
+               ->where('fp.user_id', $userId);
+        } elseif ($serviceUserCol === 'freelancer_id') {
+            $qb->where('s.freelancer_id', $userId);
+        } else {
+            $qb->where('s.user_id', $userId);
+        }
+
+        $services = $qb->orderBy('s.created_at','DESC')
             ->get()
             ->getResult();
 
@@ -189,8 +228,12 @@ class Freelancer extends Controller
 
     public function storeService()
     {
-        $this->db->table('services')->insert([
-            'user_id' => session()->get('user_id'),
+        // Detect services foreign key column to insert correctly
+        $cols = $this->db->query("SHOW COLUMNS FROM services")->getResultArray();
+        $fields = array_column($cols, 'Field');
+        $usesProfile = in_array('freelancer_profile_id', $fields);
+
+        $insert = [
             'category_id' => $this->request->getPost('category_id'),
             'title' => $this->request->getPost('title'),
             'slug' => url_title($this->request->getPost('title'), '-', true),
@@ -201,7 +244,28 @@ class Freelancer extends Controller
             'revision_count' => $this->request->getPost('revision_count'),
             'is_active' => 1,
             'created_at' => date('Y-m-d H:i:s')
-        ]);
+        ];
+
+        if ($usesProfile) {
+            $userId = session()->get('user_id');
+            // ensure freelancer profile exists and get its id
+            $fp = $this->db->table('freelancer_profiles')->where('user_id', $userId)->get()->getRow();
+            if (!$fp) {
+                $this->db->table('freelancer_profiles')->insert([
+                    'user_id' => $userId,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+                $fpId = $this->db->insertID();
+            } else {
+                $fpId = $fp->id;
+            }
+
+            $insert['freelancer_profile_id'] = $fpId;
+        } else {
+            $insert['user_id'] = session()->get('user_id');
+        }
+
+        $this->db->table('services')->insert($insert);
 
         return redirect()->to('/freelancer/services');
     }

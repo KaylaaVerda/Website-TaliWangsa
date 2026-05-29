@@ -20,18 +20,32 @@
                 id="searchKeyword"
                 value="<?= esc($search ?? '') ?>"
                 placeholder="Cari jasa, skill, atau nama freelancer..."
-                class="flex-1 px-4 py-4 outline-none rounded-2xl bg-[#F5FAFD]">
+                class="flex-1 px-4 py-4 outline-none rounded-2xl bg-[#F5FAFD] border border-slate-200 text-slate-700 transition focus:border-[#00A9FF] focus:ring-2 focus:ring-[#00A9FF]/10">
 
-            <select id="searchCategory" class="px-4 py-4 rounded-2xl bg-[#F5FAFD] outline-none">
-                <option value="">Semua Kategori</option>
-                <?php foreach($categories as $cat): ?>
-                    <option value="<?= esc($cat->slug) ?>" <?= $category == $cat->slug ? 'selected' : '' ?>>
-                        <?= esc($cat->name) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <div class="relative w-full lg:w-auto lg:max-w-[260px]">
+                <button type="button" id="categoryDropdownButton" class="w-full text-left px-5 py-4 rounded-full bg-white border border-slate-200 text-slate-700 shadow-sm flex items-center justify-between gap-3 transition duration-200 ease-in-out hover:border-[#00A9FF] focus:outline-none focus:border-[#00A9FF] focus:ring-2 focus:ring-[#00A9FF]/10 text-sm">
+                    <span id="selectedCategoryLabel"><?= esc($category ? array_reduce($categories, fn($carry,$item) => $item->slug === $category ? $item->name : $carry, 'Semua Kategori') : 'Semua Kategori') ?></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <input type="hidden" id="searchCategory" name="category" value="<?= esc($category ?? '') ?>">
 
-            <button onclick="handleMarketplaceSearch()" class="bg-[#00A9FF] hover:bg-[#0094E0] text-white px-8 py-4 rounded-2xl font-semibold">
+                <div id="categoryDropdownMenu" class="hidden absolute right-0 z-50 mt-2 w-full rounded-[32px] border border-slate-200 bg-white shadow-soft overflow-hidden">
+                    <div class="max-h-64 overflow-y-auto">
+                        <button type="button" class="w-full text-left px-5 py-3 text-sm text-slate-700 hover:bg-slate-100 transition" data-value="">
+                            Semua Kategori
+                        </button>
+                        <?php foreach($categories as $cat): ?>
+                            <button type="button" class="w-full text-left px-5 py-3 text-sm text-slate-700 hover:bg-slate-100 transition" data-value="<?= esc($cat->slug) ?>">
+                                <?= esc($cat->name) ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="handleMarketplaceSearch()" class="bg-[#00A9FF] hover:bg-[#0094E0] text-white px-8 py-4 rounded-2xl font-semibold transition">
                 Cari
             </button>
         </div>
@@ -132,11 +146,6 @@
                             </div>
 
                         <?php endforeach; ?>
-                    </div>
-
-                    <!-- PAGINATION -->
-                    <div class="flex justify-center mt-12">
-                        <?= $pager->links('default', 'default', 1) ?>
                     </div>
 
                 <?php else: ?>
