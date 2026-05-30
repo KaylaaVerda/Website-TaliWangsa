@@ -175,9 +175,56 @@
 </section>
 
 <script>
+    const categoryDropdownButton = document.getElementById('categoryDropdownButton');
+    const categoryDropdownMenu = document.getElementById('categoryDropdownMenu');
+    const categoryValueInput = document.getElementById('searchCategory');
+    const selectedCategoryLabel = document.getElementById('selectedCategoryLabel');
+
+    function closeCategoryDropdown() {
+        categoryDropdownMenu.classList.add('hidden');
+        categoryDropdownButton.setAttribute('aria-expanded', 'false');
+    }
+
+    function openCategoryDropdown() {
+        categoryDropdownMenu.classList.remove('hidden');
+        categoryDropdownButton.setAttribute('aria-expanded', 'true');
+    }
+
+    function toggleCategoryDropdown() {
+        categoryDropdownMenu.classList.toggle('hidden');
+        const expanded = categoryDropdownButton.getAttribute('aria-expanded') === 'true';
+        categoryDropdownButton.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    }
+
+    categoryDropdownButton.addEventListener('click', () => {
+        toggleCategoryDropdown();
+    });
+
+    categoryDropdownMenu.querySelectorAll('button[data-value]').forEach(item => {
+        item.addEventListener('click', () => {
+            const value = item.getAttribute('data-value');
+            const label = item.textContent.trim();
+            categoryValueInput.value = value;
+            selectedCategoryLabel.textContent = label;
+            closeCategoryDropdown();
+        });
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!categoryDropdownButton.contains(event.target) && !categoryDropdownMenu.contains(event.target)) {
+            closeCategoryDropdown();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeCategoryDropdown();
+        }
+    });
+
     function handleMarketplaceSearch() {
         const keyword = document.getElementById('searchKeyword').value;
-        const category = document.getElementById('searchCategory').value;
+        const category = categoryValueInput.value;
         let url = '/marketplace';
         let params = [];
         if (keyword) params.push('search=' + encodeURIComponent(keyword));
@@ -185,6 +232,7 @@
         if (params.length > 0) url += '?' + params.join('&');
         window.location.href = url;
     }
+
     document.getElementById('searchKeyword').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') handleMarketplaceSearch();
     });

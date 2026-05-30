@@ -90,10 +90,22 @@
                 </div>
             </div>
 
+            <?php
+                $currentPath = trim(service('uri')->getPath(), '/');
+                $isBeranda = $currentPath === '' || $currentPath === 'home';
+                $isCariJasa = strpos($currentPath, 'marketplace') !== false;
+                $isCaraKerja = strpos($currentPath, 'how-it-works') !== false;
+                $activeBeranda = $isBeranda ? 'text-[#00A9FF] font-bold' : 'text-[#64748B] hover:text-[#00A9FF]';
+                $activeCariJasa = $isCariJasa ? 'text-[#00A9FF] font-bold' : 'text-[#64748B] hover:text-[#00A9FF]';
+                $activeCaraKerja = $isCaraKerja ? 'text-[#00A9FF] font-bold' : 'text-[#64748B] hover:text-[#00A9FF]';
+                $activeStyleBeranda = $isBeranda ? 'color:#00A9FF !important;font-weight:700 !important;' : '';
+                $activeStyleCariJasa = $isCariJasa ? 'color:#00A9FF !important;font-weight:700 !important;' : '';
+                $activeStyleCaraKerja = $isCaraKerja ? 'color:#00A9FF !important;font-weight:700 !important;' : '';
+            ?>
             <div class="hidden lg:flex items-center gap-10">
-                <a href="/marketplace" class="text-[#64748B] hover:text-[#00A9FF]">Cari Jasa</a>
-                <a href="/" class="text-[#64748B] hover:text-[#00A9FF]">Home</a>
-                <a href="/how-it-works" class="text-[#64748B] hover:text-[#00A9FF]">Cara Kerja</a>
+                <a href="/" class="<?= $activeBeranda ?>" style="<?= $activeStyleBeranda ?>">Beranda</a>
+                <a href="/marketplace" class="<?= $activeCariJasa ?>" style="<?= $activeStyleCariJasa ?>">Cari Jasa</a>
+                <a href="/how-it-works" class="<?= $activeCaraKerja ?>" style="<?= $activeStyleCaraKerja ?>">Cara Kerja</a>
             </div>
 
             <div class="hidden lg:flex items-center gap-4">
@@ -117,9 +129,9 @@
 
         <div id="mobileMenu" class="hidden pb-5 lg:hidden">
             <div class="bg-white rounded-2xl shadow-soft p-5 flex flex-col gap-4">
-                <a href="/marketplace">Cari Jasa</a>
-                <a href="/">Home</a>
-                <a href="/how-it-works">Cara Kerja</a>
+                <a href="/" class="<?= $activeBeranda ?>" style="<?= $activeStyleBeranda ?>">Beranda</a>
+                <a href="/marketplace" class="<?= $activeCariJasa ?>" style="<?= $activeStyleCariJasa ?>">Cari Jasa</a>
+                <a href="/how-it-works" class="<?= $activeCaraKerja ?>" style="<?= $activeStyleCaraKerja ?>">Cara Kerja</a>
 
                 <a href="/login" class="border border-[#00A9FF] text-center text-[#00A9FF] py-3 rounded-xl">
                     Masuk

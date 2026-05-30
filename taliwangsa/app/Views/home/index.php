@@ -24,15 +24,37 @@
                 <input type="text"
                     id="searchKeyword"
                     placeholder="Cari jasa profesional..."
-                    class="flex-1 px-4 py-4 outline-none rounded-2xl bg-[#F5FAFD]">
+                    class="flex-1 px-4 py-4 outline-none rounded-2xl bg-[#F5FAFD] border border-slate-200 text-slate-700 transition focus:border-[#00A9FF] focus:ring-2 focus:ring-[#00A9FF]/10">
 
-                <select id="searchCategory" class="px-4 py-4 rounded-2xl bg-[#F5FAFD] outline-none">
-                    <option value="">Semua Kategori</option>
-                    <option value="desain-grafis">Desain Grafis</option>
-                    <option value="pengembangan-web">Website</option>
-                    <option value="video">Video</option>
-                    <option value="digital-marketing">Digital Marketing</option>
-                </select>
+                <div class="relative w-full lg:w-auto lg:max-w-[260px]">
+                    <button type="button" id="homeCategoryDropdownButton" class="w-full text-left px-5 py-4 rounded-full bg-white border border-slate-200 text-slate-700 shadow-sm flex items-center justify-between gap-3 transition duration-200 ease-in-out hover:border-[#00A9FF] focus:outline-none focus:border-[#00A9FF] focus:ring-2 focus:ring-[#00A9FF]/10 text-sm">
+                        <span id="homeSelectedCategoryLabel">Semua Kategori</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="hidden" id="searchCategory" name="category" value="">
+
+                    <div id="homeCategoryDropdownMenu" class="hidden absolute right-0 z-50 mt-2 w-full rounded-[32px] border border-slate-200 bg-white shadow-soft overflow-hidden">
+                        <div class="max-h-64 overflow-y-auto">
+                            <button type="button" class="w-full text-left px-5 py-3 text-sm text-slate-700 hover:bg-slate-100 transition" data-value="">
+                                Semua Kategori
+                            </button>
+                            <button type="button" class="w-full text-left px-5 py-3 text-sm text-slate-700 hover:bg-slate-100 transition" data-value="desain-grafis">
+                                Desain Grafis
+                            </button>
+                            <button type="button" class="w-full text-left px-5 py-3 text-sm text-slate-700 hover:bg-slate-100 transition" data-value="pengembangan-web">
+                                Website
+                            </button>
+                            <button type="button" class="w-full text-left px-5 py-3 text-sm text-slate-700 hover:bg-slate-100 transition" data-value="video">
+                                Video
+                            </button>
+                            <button type="button" class="w-full text-left px-5 py-3 text-sm text-slate-700 hover:bg-slate-100 transition" data-value="digital-marketing">
+                                Digital Marketing
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <button onclick="handleSearch()" class="bg-[#00A9FF] hover:bg-[#0094E0] text-white px-8 py-4 rounded-2xl font-semibold btn-hover">
                     Cari
@@ -40,9 +62,51 @@
             </div>
 
             <script>
+                const homeCategoryDropdownButton = document.getElementById('homeCategoryDropdownButton');
+                const homeCategoryDropdownMenu = document.getElementById('homeCategoryDropdownMenu');
+                const homeCategoryValueInput = document.getElementById('searchCategory');
+                const homeSelectedCategoryLabel = document.getElementById('homeSelectedCategoryLabel');
+
+                function closeHomeCategoryDropdown() {
+                    homeCategoryDropdownMenu.classList.add('hidden');
+                    homeCategoryDropdownButton.setAttribute('aria-expanded', 'false');
+                }
+
+                function toggleHomeCategoryDropdown() {
+                    homeCategoryDropdownMenu.classList.toggle('hidden');
+                    const expanded = homeCategoryDropdownButton.getAttribute('aria-expanded') === 'true';
+                    homeCategoryDropdownButton.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+                }
+
+                homeCategoryDropdownButton.addEventListener('click', () => {
+                    toggleHomeCategoryDropdown();
+                });
+
+                homeCategoryDropdownMenu.querySelectorAll('button[data-value]').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const value = item.getAttribute('data-value');
+                        const label = item.textContent.trim();
+                        homeCategoryValueInput.value = value;
+                        homeSelectedCategoryLabel.textContent = label;
+                        closeHomeCategoryDropdown();
+                    });
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (!homeCategoryDropdownButton.contains(event.target) && !homeCategoryDropdownMenu.contains(event.target)) {
+                        closeHomeCategoryDropdown();
+                    }
+                });
+
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        closeHomeCategoryDropdown();
+                    }
+                });
+
                 function handleSearch() {
                     const keyword = document.getElementById('searchKeyword').value;
-                    const category = document.getElementById('searchCategory').value;
+                    const category = homeCategoryValueInput.value;
                     let url = '/marketplace';
                     let params = [];
                     if (keyword) params.push('search=' + encodeURIComponent(keyword));
@@ -50,6 +114,7 @@
                     if (params.length > 0) url += '?' + params.join('&');
                     window.location.href = url;
                 }
+
                 document.getElementById('searchKeyword').addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') handleSearch();
                 });
